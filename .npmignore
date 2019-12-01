@@ -9,3 +9,4 @@ npm-debug.log
 .prettierrc
 .jshintrc
 .eslintrc.js
+.babelrc
