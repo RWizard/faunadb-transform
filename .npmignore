@@ -1,0 +1,11 @@
+.DS_Store
+node_modules
+src
+.git
+.npmrc
+npm-debug.log
+.gitignore
+.editorconfig
+.prettierrc
+.jshintrc
+.eslintrc.js
