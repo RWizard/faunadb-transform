@@ -8,7 +8,7 @@
     "build": "babel src/ -d dist/",
     "serve": "babel -w src/ -d dist/ | nodemon --watch dist"
   },
-  "author": "Roman Vasiliev <romvas@gmail.com>",
+  "author": "Roman <romvas@gmail.com>",
   "license": "ISC",
   "dependencies": {
     "faunadb": "^2.10.0"
@@ -20,5 +20,10 @@
     "babel-preset-stage-0": "^6.16.0",
     "nodemon": "^1.11.0"
   },
-  "private": true
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RWizard/faunadb-transform"
+  },
+  "bugs": "https://github.com/RWizard/faunadb-transform/issues",
+  "private": false
 }
