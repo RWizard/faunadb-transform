@@ -10,7 +10,7 @@ Fill test data to collections ([faker](https://www.npmjs.com/package/faker)).
 
 ## Docs
 
-In process...
+[Documentation & Examples](https://faunadb-transform.now.sh)
 
 ## Tasks
 
