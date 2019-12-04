@@ -23,4 +23,3 @@ Fill test data to collections ([faker](https://www.npmjs.com/package/faker)).
   - [ ] user-functions
 - [ ] Transfer data between DB
 - [ ] Fill test data (faker)
-
