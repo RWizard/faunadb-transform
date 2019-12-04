@@ -10,3 +10,7 @@ npm-debug.log
 .jshintrc
 .eslintrc.js
 .babelrc
+.jsbeautifyrc
+.markdownlint.json
+scripts.fql.md
+test

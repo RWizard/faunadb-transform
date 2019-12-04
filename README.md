@@ -14,7 +14,7 @@ In process...
 
 ## Tasks
 
-- [ ] Transform collections
+- [x] Transform collections
 - [ ] Transform indexes
 - [ ] Transform user-functions
 - [ ] Transfer structure between DB

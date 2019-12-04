@@ -1,32 +1,35 @@
-import faunadb from 'faunadb'
+/*jshint -W030*/
+import { Collections, collections } from './collections'
+import indexes from './indexes'
+import transform from './transform'
+import fauna from './fauna'
+import log from './log'
 
-export default (json, settings) => {
-    // console.log('json :', json);
-    Object.keys(json).map(key => {
+export default (json, settings = {}) => {
+  const { debug } = settings || false
+
+  const keys = Object.keys(json)
+    fauna(settings, keys)
+
+    .then(res => {
+      keys.map(async key => {
         switch (key) {
-            case 'collections':
-                collections(json[key])
-                break
+        case 'collections':
+          await Collections(json[key], settings)
+          break
         }
+      })
     })
-}
 
-const collections = (json) => {
-    Object.keys(json).map(collection => {
-        console.log('collection :', collection);
+    .catch(err => {
+      log(err, null, { error: true })
+      debug && log('Init settings - stop')
+      return err
     })
-}
-
-const indexes = (json) => {
-
-}
-
-const transform = (json) => {
-
 }
 
 export {
-    collections,
-    indexes,
-    transform,
+  collections,
+  indexes,
+  transform,
 }
