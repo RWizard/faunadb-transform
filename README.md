@@ -15,11 +15,11 @@ Fill test data to collections ([faker](https://www.npmjs.com/package/faker)).
 ## Tasks
 
 - [x] Transform collections
-- [ ] Transform indexes
+- [x] Transform indexes
+- [x] Fill test data ([faker](https://www.npmjs.com/package/faker))
 - [ ] Transform user-functions
 - [ ] Transfer structure between DB
   - [ ] collections
   - [ ] indexes
   - [ ] user-functions
 - [ ] Transfer data between DB
-- [ ] Fill test data (faker)
