@@ -2,7 +2,6 @@
 /*jshint -W061*/
 import log from './log'
 import fauna from './fauna'
-import faunadb from 'faunadb'
 
 export const Collections = async (collections, settings = {}) => {
   const { debug } = settings || false
@@ -18,10 +17,15 @@ export const Collections = async (collections, settings = {}) => {
     collection.params.name = collection.params.name || collection.name
     return collection
   })
+
   debug && log('Collections')
+
   const { Map, CreateCollection, Lambda, Let, If, Select, Var, Exists, Delete, Update, Abort, Not, And, Collection } = settings.q
-  collectionsArray.map(async collection => {
-    debug && await log(`Collection: ${collection.name} - start`)
+
+  const promises = collectionsArray.map(async collection => {
+
+    debug && log(`Collection: ${collection.name} - start`)
+
     return await settings.target.query(
       Map(
           [collection],
@@ -53,10 +57,10 @@ export const Collections = async (collections, settings = {}) => {
           )
         )
       )
-
-      .then(result =>
+      .then(res => {
         debug && log(`Collection: ${collection.name} - done`)
-      )
+        return {[collection.name]: res}
+      })
 
       .catch(err => {
         debug && JSON.parse(err.requestResult.responseRaw)
@@ -68,19 +72,25 @@ export const Collections = async (collections, settings = {}) => {
 
       })
   })
-
-
+  return Promise.all(promises)
+  .then(res => {
+    debug && log(`Collections - done`)
+    return {'collections': res}
+  })
+  .catch(err => console.log('Promises all Collections :', err))
 }
 
 export const collections = (json, settings = {}) => {
   const { debug } = settings || false
 
-  const keys = Object.keys(json)
-    fauna(settings, keys)
-    .then(res => Collections(json, res))
-    .catch(err => {
-      log(err, null, { error: true })
-      debug && log('Init settings - stop')
-      return err
-    })
+  return fauna(settings, ['collections'])
+  .then(res => {
+    Collections(json, res)
+    return res
+  })
+  .catch(err => {
+    log(err, null, { error: true })
+    debug && log('Init settings - stop')
+    return err
+  })
 }
