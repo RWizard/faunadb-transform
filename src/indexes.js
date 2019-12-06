@@ -106,8 +106,13 @@ export const Indexes = async (indexes, settings = {}) => {
 export const indexes = (json, settings = {}) => {
   const { debug } = settings || false
 
-  fauna(settings, ['indexes'])
-  .then(res => Indexes(json, res))
+  return fauna(settings, ['indexes'])
+  .then(res => {
+    return Indexes(json, res)
+    .then(res => {
+      return res
+    })
+  })
   .catch(err => {
     log(err, null, { error: true })
     debug && log('Init settings - stop')

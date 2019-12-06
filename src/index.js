@@ -1,6 +1,6 @@
 /*jshint -W030*/
 import { Collections, collections } from './collections'
-import { Faker, faker } from './faker'
+import { Fill, fill } from './fill'
 import { Indexes, indexes } from './indexes'
 import transform from './transform'
 import fauna from './fauna'
@@ -20,10 +20,10 @@ export default (json, settings = {}) => {
     })
     .then(res => {
       // console.log('Indexes res :', JSON.stringify(res));
-      return Faker(json.fill, settings)
+      return Fill(json.fill, settings)
     })
     .then(res => {
-      // console.log('Faker res :', JSON.stringify(res));
+      // console.log('Fill res :', JSON.stringify(res));
     })
     .catch(err => {
       // console.log('index err :', err);
@@ -47,5 +47,5 @@ export {
   collections,
   indexes,
   transform,
-  faker,
+  fill,
 }

@@ -5,7 +5,7 @@ import fauna from './fauna'
 
 const f = require('faker');
 
-export const Faker = async (json = {}, settings = {}) => {
+export const Fill = async (json = {}, settings = {}) => {
   const { debug } = settings || false
   let fakerArray = !Array.isArray(json)
   ? Object.keys(json).map(val => {
@@ -77,7 +77,7 @@ export const Faker = async (json = {}, settings = {}) => {
       debug && log(`Fill - done`)
       return {'fill': res}
     })
-    .catch(err => console.log('Promises all Faker :', err))
+    .catch(err => console.log('Promises all Fill :', err))
   })
 }
 
@@ -115,11 +115,16 @@ const fillParams = async (obj, count) => {
   return await fillArray
 }
 
-export const faker = (json, settings = {}) => {
+export const fill = (json, settings = {}) => {
   const { debug } = settings || false
 
-  fauna(settings, ['faker'])
-  .then(res => Faker(json, res))
+  return fauna(settings, ['fill'])
+  .then(res => {
+    return Fill(json, res)
+    .then(res => {
+      return res
+    })
+  })
   .catch(err => {
     log(err, null, { error: true })
     debug && log('Init settings - stop')

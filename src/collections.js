@@ -85,8 +85,11 @@ export const collections = (json, settings = {}) => {
 
   return fauna(settings, ['collections'])
   .then(res => {
-    Collections(json, res)
-    return res
+    return Collections(json, res)
+    .then(res => {
+      return res
+    })
+    // return res
   })
   .catch(err => {
     log(err, null, { error: true })
