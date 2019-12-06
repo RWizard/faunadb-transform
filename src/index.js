@@ -2,6 +2,7 @@
 import { Collections, collections } from './collections'
 import { Fill, fill } from './fill'
 import { Indexes, indexes } from './indexes'
+import { Functions, functions } from './functions'
 import transform from './transform'
 import fauna from './fauna'
 import log from './log'
@@ -24,10 +25,15 @@ export default (json, settings = {}) => {
     })
     .then(res => {
       // console.log('Fill res :', JSON.stringify(res));
+      return Functions(json.functions, settings)
+    })
+    .then(res => {
+      // console.log('Functions res :', JSON.stringify(res));
+      return res
     })
     .catch(err => {
-      // console.log('index err :', err);
-      debug && JSON.parse(err.requestResult.responseRaw)
+      console.log('index err :', err);
+      debug && err.requestResult && JSON.parse(err.requestResult.responseRaw)
 
       .errors.map(error =>
           log(`${index.name}: ${error.description}`, null,
@@ -48,4 +54,5 @@ export {
   indexes,
   transform,
   fill,
+  functions,
 }

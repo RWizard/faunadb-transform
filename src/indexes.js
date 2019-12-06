@@ -83,7 +83,7 @@ export const Indexes = async (indexes, settings = {}) => {
       )
     )
     .then(res => {
-      debug && log('Index', index.name, ' - done')
+      debug && log('Index', index.name + ' - done')
       return res
     })
     .catch(err => {

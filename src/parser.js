@@ -1,31 +1,32 @@
 const esprima = require('esprima')
+const escodegen = require('escodegen')
+
 export const parser = (query) => {
-    if (!process.browser) return
     var parse = esprima.parseScript(query)
     const replacer = (obj) => {
         let {type, callee} = obj
         if (type) {
             switch(type){
                 case  'CallExpression':
-                    callee.name = 'faunadb.query.' + callee.name
+                    callee.name = 'settings.q.' + callee.name
                     break
                 case 'Property':
-                    if (obj.value && obj.value.callee) obj.value.callee.name = 'faunadb.query.' + obj.value.callee.name
-                    if (obj.value && obj.value.properties) obj.value.properties = window._.map(obj.value.properties, o => replacer(o))
-                    if (obj.value && obj.value.arguments) obj.value.arguments = window._.map(obj.value.arguments, o => replacer(o))
+                    if (obj.value && obj.value.callee) obj.value.callee.name = 'settings.q.' + obj.value.callee.name
+                    if (obj.value && obj.value.properties) obj.value.properties = obj.value.properties.map(o => replacer(o))
+                    if (obj.value && obj.value.arguments) obj.value.arguments = obj.value.arguments.map(o => replacer(o))
                     break
                 case 'ObjectExpression':
-                    if (obj.properties) obj.properties = window._.map(obj.properties, o => replacer(o))
+                    if (obj.properties) obj.properties = obj.properties.map(o => replacer(o))
                 break
             }
         }
         if (obj.arguments)
-            obj.arguments = window._.map(obj.arguments, o => replacer(o))
+            obj.arguments = obj.arguments.map(o => replacer(o))
         return obj
     }
 
     parse.body[0].expression = replacer(parse.body[0].expression)
-    return window.escodegen.generate(parse.body[0]).replace(/;/, '')
+    return escodegen.generate(parse.body[0]).replace(/;/, '')
 }
 
 export const evalParser = async (query, client) => {
