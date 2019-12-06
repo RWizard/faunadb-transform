@@ -14,14 +14,16 @@ export const Fill = async (json = {}, settings = {}) => {
     return json[val]
   })
   : json
+
   var promises
 
-  return await fillCollection(fakerArray)
+  return await fillCollection(fakerArray, settings)
 
   .then(res => {
     debug && log('Fill')
 
     const { Map, Lambda, Var, Create, Collection, Let, If, And, Not, IsNull, Exists, Index, Do, Abort, Paginate, Match, Delete, Select } = settings.q
+
     promises = res.map(async collection => {
       debug && log('Fill collection', collection.name)
 
@@ -73,7 +75,8 @@ export const Fill = async (json = {}, settings = {}) => {
         )
       })
     })
-    return Promise.all(promises).then(res => {
+    return Promise.all(promises)
+    .then(res => {
       debug && log(`Fill - done`)
       return {'fill': res}
     })
@@ -81,23 +84,34 @@ export const Fill = async (json = {}, settings = {}) => {
   })
 }
 
-const fillCollection = async (collections) => {
-  return await collections.map(collection => {
+const fillCollection = async (collections, settings) => {
+  const promises = await collections.map(async collection => {
     if (collection.locale) f.locale = collection.locale
     collection.count = collection.count || 1
-      fillParams(collection.params, collection.count)
-      .then(result => {
-        collection.params = result
-      })
-    return collection
+
+    return await fillParams(collection.params, collection.count)
+
+    .then(result => {
+      return fillParams(...result, collection.count, settings, /"settings\.handlers\./g)
+    })
+
+    .then(result => {
+      collection.params = result
+      return collection
+    })
+
+  })
+  return Promise.all(promises)
+  .then(result => {
+    return result
   })
 }
 
-const fillParams = async (obj, count) => {
+const fillParams = async (obj, count, settings, findRegex = /"f\./g) => {
   let fillArray = []
   obj = JSON.stringify(obj)
   for (let i = 0; i < count; i++) {
-    const fakers = Array.from(obj.matchAll(/"f\./g))
+    const fakers = Array.from(obj.matchAll(findRegex))
     let lastIndex = 0
     let newObj = ''
     for (let i = 0; i < fakers.length; i++) {
@@ -107,9 +121,9 @@ const fillParams = async (obj, count) => {
         obj.substring(lastIndex, fakers[i].index+1) +
         eval(replace)
 
-      lastIndex = point
-    }
-    newObj = newObj + obj.substring(lastIndex, obj.length)
+        lastIndex = point
+      }
+      newObj = newObj + obj.substring(lastIndex, obj.length)
     fillArray.push(JSON.parse(newObj))
   }
   return await fillArray
