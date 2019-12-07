@@ -6,7 +6,7 @@ Create, update, delete - collections, indexes, user-functions.
 
 For transfer data from source to target DB with transfer structure and/or records.
 
-Fill test data to collections ([faker](https://www.npmjs.com/package/faker)).
+Fill test data to collections from [faker](https://www.npmjs.com/package/faker) or custom handler.
 
 ## Docs
 
@@ -17,7 +17,7 @@ Fill test data to collections ([faker](https://www.npmjs.com/package/faker)).
 - [x] Transform collections
 - [x] Transform indexes
 - [x] Fill test data ([faker](https://www.npmjs.com/package/faker))
-- [ ] Transform user-functions
+- [x] Transform user-functions
 - [ ] Transfer structure between DB
   - [ ] collections
   - [ ] indexes
