@@ -3,7 +3,7 @@
 import log from './log'
 import fauna from './fauna'
 
-export const Indexes = async (indexes, settings = {}) => {
+export const Indexes = async (indexes = {}, settings = {}) => {
   const { debug } = settings || false
   let indexesArray = !Array.isArray(indexes)
   ? Object.keys(indexes).map(val => {
@@ -17,9 +17,7 @@ export const Indexes = async (indexes, settings = {}) => {
     index.params.name = index.params.name || index.name
     return index
   })
-
   debug && log('Indexes')
-
   const promises = indexesArray.map(async index => {
     debug && log("Index " + index.name + " - start")
     const { Map, Lambda, Var, CreateIndex, Collection, Let, If, And, Not, Or, Exists, Index, Do, Abort, Delete, Select, Update, Concat } = settings.q
@@ -95,23 +93,21 @@ export const Indexes = async (indexes, settings = {}) => {
       )
     })
   })
+
   return Promise.all(promises)
   .then(res => {
     debug && log(`Indexes - done`)
-    return {'indexes': res}
+    return res
   })
   .catch(err => console.log('Promises all Indexes :', err))
 }
 
-export const indexes = (json, settings = {}) => {
+export const indexes = (json = {}, settings = {}) => {
   const { debug } = settings || false
 
   return fauna(settings, ['indexes'])
-  .then(res => {
-    return Indexes(json, res)
-    .then(res => {
-      return res
-    })
+  .then(settings => {
+    return Indexes(json, settings)
   })
   .catch(err => {
     log(err, null, { error: true })

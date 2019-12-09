@@ -3,7 +3,7 @@
 import log from './log'
 import fauna from './fauna'
 
-export const Collections = async (collections, settings = {}) => {
+export const Collections = async (collections = {}, settings = {}) => {
   const { debug } = settings || false
   let collectionsArray = !Array.isArray(collections)
   ? Object.keys(collections).map(val => {
@@ -75,21 +75,17 @@ export const Collections = async (collections, settings = {}) => {
   return Promise.all(promises)
   .then(res => {
     debug && log(`Collections - done`)
-    return {'collections': res}
+    return res
   })
   .catch(err => console.log('Promises all Collections :', err))
 }
 
-export const collections = (json, settings = {}) => {
+export const collections = (json = {}, settings = {}) => {
   const { debug } = settings || false
 
   return fauna(settings, ['collections'])
   .then(res => {
     return Collections(json, res)
-    .then(res => {
-      return res
-    })
-    // return res
   })
   .catch(err => {
     log(err, null, { error: true })

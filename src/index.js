@@ -3,48 +3,77 @@ import { Collections, collections } from './collections'
 import { Fill, fill } from './fill'
 import { Indexes, indexes } from './indexes'
 import { Functions, functions } from './functions'
-import transform from './transform'
+import { Transfer, transfer } from './transfer'
+// import transform from './transform'
 import fauna from './fauna'
 import log from './log'
 
-export default (json, settings = {}) => {
+export default async (json, settings = {}) => {
   const { debug } = settings || false
 
   const keys = Object.keys(json)
-  fauna(settings, keys)
+  return await fauna(settings, keys)
+
+  .then(settings => {
+    // console.log('settings :', settings);
+    return Collections(json.collections, settings)
+  })
+
+  .then(collections => {
+    // console.log('Collections res :', JSON.stringify(collections));
+    return Indexes(json.indexes, settings)
+    .then(indexes => {
+      return {
+        collections,
+        indexes
+      }
+    })
+  })
 
   .then(res => {
-    Collections(json.collections, settings)
-    .then(res => {
-      // console.log('Collections res :', JSON.stringify(res));
-      return Indexes(json.indexes, settings)
-    })
-    .then(res => {
-      // console.log('Indexes res :', JSON.stringify(res));
-      return Fill(json.fill, settings)
-    })
-    .then(res => {
-      // console.log('Fill res :', JSON.stringify(res));
-      return Functions(json.functions, settings)
-    })
-    .then(res => {
-      // console.log('Functions res :', JSON.stringify(res));
+    // console.log('Indexes res :', JSON.stringify(res));
+    return Fill(json.fill, settings)
+    .then(fill => {
+      res.fill = fill
       return res
     })
-    .catch(err => {
-      console.log('index err :', err);
-      debug && err.requestResult && JSON.parse(err.requestResult.responseRaw)
+  })
 
+  .then(res => {
+    // console.log('Fill res :', JSON.stringify(res));
+    return Functions(json.functions, settings)
+    .then(functions => {
+      res.functions = functions
+      return res
+    })
+  })
+
+  .then(res => {
+    // console.log('Functions res :', JSON.stringify(res));
+    return Transfer(json.transfer, settings)
+    .then(transfer => {
+      res.transfer = transfer
+      return res
+    })
+  })
+
+  .then(res => {
+    // console.log('Full res :', JSON.stringify(res));
+    return res
+  })
+
+  .catch(err => {
+    if (err.requestResult) {
+      JSON.parse(err.requestResult.responseRaw)
       .errors.map(error =>
           log(`${index.name}: ${error.description}`, null,
             { error: true })
       )
-    })
-  })
-
-  .catch(err => {
-    log(err, null, { error: true })
-    debug && log('Init settings - stop')
+    }
+    else {
+      log(err, null, { error: true })
+      debug && log('Init settings - stop')
+    }
     return err
   })
 }
@@ -52,7 +81,7 @@ export default (json, settings = {}) => {
 export {
   collections,
   indexes,
-  transform,
+  transfer,
   fill,
   functions,
 }

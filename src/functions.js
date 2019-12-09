@@ -4,7 +4,7 @@ import log from './log'
 import fauna from './fauna'
 import { parser } from './parser'
 
-export const Functions = async (functions, settings = {}) => {
+export const Functions = async (functions = {}, settings = {}) => {
   const { debug } = settings || false
 
   let functionsArray = !Array.isArray(functions)
@@ -83,20 +83,17 @@ export const Functions = async (functions, settings = {}) => {
   return Promise.all(promises)
   .then(res => {
     debug && log(`Functions - done`)
-    return {'functions': [...res]}
+    return res
   })
   .catch(err => console.log('Promises all Functions :', err))
 }
 
-export const functions = (json, settings = {}) => {
+export const functions = (json = {}, settings = {}) => {
   const { debug } = settings || false
 
   return fauna(settings, ['functions'])
   .then(res => {
     return Functions(json, res)
-    .then(res => {
-      return res
-    })
   })
   .catch(err => {
     log(err, null, { error: true })

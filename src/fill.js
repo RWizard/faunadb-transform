@@ -78,7 +78,7 @@ export const Fill = async (json = {}, settings = {}) => {
     return Promise.all(promises)
     .then(res => {
       debug && log(`Fill - done`)
-      return {'fill': res}
+      return res
     })
     .catch(err => console.log('Promises all Fill :', err))
   })
@@ -129,15 +129,12 @@ const fillParams = async (obj, count, settings, findRegex = /"f\./g) => {
   return await fillArray
 }
 
-export const fill = (json, settings = {}) => {
+export const fill = (json = {}, settings = {}) => {
   const { debug } = settings || false
 
   return fauna(settings, ['fill'])
   .then(res => {
     return Fill(json, res)
-    .then(res => {
-      return res
-    })
   })
   .catch(err => {
     log(err, null, { error: true })

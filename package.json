@@ -1,7 +1,7 @@
 {
   "name": "faunadb-transform",
-  "version": "0.0.47-1",
-  "description": "FaunaDB Migrate Package",
+  "version": "0.0.47-3",
+  "description": "FaunaDB Transformation Package",
   "main": "dist/index.js",
   "scripts": {
     "watch": "babel -w src/ -d dist/",
