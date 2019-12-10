@@ -60,7 +60,7 @@ export default (indexes = {}, settings = {}) => {
         create: index.create,
         update: index.update,
         params: {
-          name: res.index.name,
+          name: index.params.name,
           source: res.source,
           data: index.params.data || data,
           terms,
@@ -77,8 +77,8 @@ export default (indexes = {}, settings = {}) => {
       debug && err.requestResult && JSON.parse(err.requestResult.responseRaw)
 
       .errors.map(error =>
-          log(`${collection.name}: ${error.description}`, null,
-            { error: true })
+        log(`${collection.name}: ${error.description}`, null,
+          { error: true })
       )
 
     })

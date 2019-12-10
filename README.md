@@ -21,5 +21,6 @@ Fill test data to collections from [faker](https://www.npmjs.com/package/faker) 
 - [ ] Transfer structure between DB
   - [x] collections
   - [x] indexes
-  - [ ] user-functions
+  - [x] user-functions
+  - [ ] user-roles
 - [ ] Transfer data between DB
