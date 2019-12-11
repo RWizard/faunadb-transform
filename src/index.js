@@ -4,6 +4,7 @@ import { Fill, fill } from './fill'
 import { Indexes, indexes } from './indexes'
 import { Functions, functions } from './functions'
 import { Transfer, transfer } from './transfer'
+import { Roles, roles } from './roles'
 // import transform from './transform'
 import fauna from './fauna'
 import log from './log'
@@ -58,8 +59,12 @@ export default async (json, settings = {}) => {
   })
 
   .then(res => {
-    // console.log('Full res :', JSON.stringify(res));
-    return res
+    // console.log('Transfer res :', JSON.stringify(res));
+    return Roles(json.roles, settings)
+    .then(roles => {
+      res.roles = roles
+      return res
+    })
   })
 
   .catch(err => {
@@ -81,7 +86,8 @@ export default async (json, settings = {}) => {
 export {
   collections,
   indexes,
-  transfer,
   fill,
   functions,
+  transfer,
+  roles,
 }

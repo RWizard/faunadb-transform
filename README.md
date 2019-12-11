@@ -16,8 +16,9 @@ Fill test data to collections from [faker](https://www.npmjs.com/package/faker) 
 
 - [x] Transform collections
 - [x] Transform indexes
-- [x] Fill test data from [faker](https://www.npmjs.com/package/faker)) and custom
 - [x] Transform user-functions
+- [ ] Transform user-roles
+- [x] Fill test data from [faker](https://www.npmjs.com/package/faker) and custom
 - [ ] Transfer structure between DB
   - [x] collections
   - [x] indexes
