@@ -4,6 +4,7 @@ import log from '../log'
 import collections from './collections'
 import indexes from './indexes'
 import functions from './functions'
+import roles from './roles'
 
 export default async (structure = {}, settings = {}) => {
   const { debug } = settings || false
@@ -32,6 +33,16 @@ export default async (structure = {}, settings = {}) => {
 
     .then(functions => {
       res.functions = functions
+      return res
+    })
+
+  })
+
+  .then(res => {
+    return roles(structure.roles, settings)
+
+    .then(roles => {
+      res.roles = roles
       return res
     })
 

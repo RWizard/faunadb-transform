@@ -27,22 +27,24 @@ export const Roles = async (roles = {}, settings = {}) => {
     role.params.privileges && role.params.privileges
 
     .map(priv => {
-      switch(priv.resource.type) {
-        case 'collection':
-        priv.resource = Collection(priv.resource.name)
-          break
-        case 'index':
-          priv.resource = Index(priv.resource.name)
-          break
-        case 'function':
-          priv.resource = Ref(Ref('functions'), priv.resource.name)
-          break
+      if (typeof priv.resource === 'object' && priv.resource.type) {
+        switch(priv.resource.type) {
+          case 'collection':
+            priv.resource = Collection(priv.resource.name)
+            break
+          case 'index':
+            priv.resource = Index(priv.resource.name)
+            break
+          case 'function':
+            priv.resource = Ref(Ref('functions'), priv.resource.name)
+            break
+        }
       }
 
       priv.actions && Object.keys(priv.actions)
 
       .map(action => {
-        if (typeof priv.actions[action] !== 'boolean') {
+        if (typeof priv.actions[action] === 'string') {
           priv.actions[action] = eval(parser(priv.actions[action]))
         }
       })
@@ -52,9 +54,10 @@ export const Roles = async (roles = {}, settings = {}) => {
     role.params.membership && role.params.membership
 
     .map(mem => {
-      mem.resource = Collection(mem.resource)
-      if (mem.predicate)
+      if (typeof mem.resource === 'string') mem.resource = Collection(mem.resource)
+      if (mem.predicate && typeof mem.predicate === 'string') {
         mem.predicate = eval(parser(mem.predicate))
+      }
     })
 
     return await settings.target.query(

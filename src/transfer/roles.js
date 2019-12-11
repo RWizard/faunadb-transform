@@ -1,44 +1,45 @@
 /*jshint -W030*/
 /*jshint -W061*/
 import log from '../log'
-import { Functions } from '../functions'
+import { Roles } from '../roles'
+import { parser } from '../parser'
 
-export default (functions = {}, settings = {}) => {
+export default (roles = {}, settings = {}) => {
   const { debug } = settings || false
 
-  let functionsArray = !Array.isArray(functions)
-  ? Object.keys(functions).map(val => {
-    functions[val].name = functions[val].name || val
-    functions[val].params = functions[val].params || {}
-    functions[val].params.name = functions[val].params.name || val
-    return functions[val]
+  let rolesArray = !Array.isArray(roles)
+  ? Object.keys(roles).map(val => {
+    roles[val].name = roles[val].name || val
+    roles[val].params = roles[val].params || {}
+    roles[val].params.name = roles[val].params.name || val
+    return roles[val]
   })
-  : functions.map(fnc => {
-    fnc.params = fnc.params || {}
-    fnc.params.name = fnc.params.name || fnc.name
-    return fnc
+  : roles.map(role => {
+    role.params = role.params || {}
+    role.params.name = role.params.name || role.name
+    return role
   })
 
-  debug && log('Structure - functions')
+  debug && log('Structure - roles')
 
-  const promises = functionsArray.map(fnc => {
-    debug && log(`Structure: ${fnc.name} - start`)
-    const { Map, Function, Lambda, Let, If, Select, Var, Exists, Abort, Not, Get } = settings.q
+  const promises = rolesArray.map(role => {
+    debug && log(`Structure: ${role.name} - start`)
+    const { Map, Role, Lambda, Let, If, Select, Var, Exists, Abort, Not, Get } = settings.q
     return settings.source.query(
       Map(
-        [ fnc ],
+        [ role ],
         Lambda(
           'json',
           Let(
             {
               name:       Select(['name'], Var('json')),
-              function:   Function(Var('name')),
-              exist:      Exists(Var('function'))
+              role:       Role(Var('name')),
+              exist:      Exists(Var('role'))
             },
             If(
               Not(Var('exist')),
-              Abort('No function in source DB'),
-              Get(Var('function'))
+              Abort('No user-role in source DB'),
+              Get(Var('role'))
             )
           )
         )
@@ -46,32 +47,39 @@ export default (functions = {}, settings = {}) => {
     )
 
     .then(res => {
-      debug && log(`Structure: ${ fnc.name } - transfer`)
       res = res[0]
 
-      const { data, role, body } = res
+      res.privileges && res.privileges
+      .map(priv => {
+        priv.resource = eval(parser(`${priv.resource}`))
+      })
 
-      const targetFunction = [{
-        name: fnc.name,
-        create: fnc.create,
-        update: fnc.update,
+      res.membership && res.membership
+      .map(mem => {
+        mem.resource = eval(parser(`${mem.resource}`))
+      })
+
+      debug && log(`Structure: ${ role.name } - transfer`)
+
+      const targetRole = [{
+        name:         role.name,
+        create:       role.create,
+        update:       role.update,
         params: {
-          name: fnc.params.name,
-          data: fnc.params.data || data,
-          role: fnc.params.role || role,
-          body: `${body}`
+          name:       role.params.name,
+          privileges: role.params.privileges || res.privileges,
+          membership: role.params.membership || res.membership,
         }
       }]
-
-      return Functions(targetFunction, settings)
-
+      return Roles(targetRole, settings)
     })
 
     .catch(err => {
+      console.log('err :', err);
       debug && err.requestResult && JSON.parse(err.requestResult.responseRaw)
 
       .errors.map(error => {
-        log(`${ fnc.name }: ${ error.description }`, '',
+        log(`${ role.name }: ${ error.description }`, '',
           { error: true })
       })
 
@@ -82,7 +90,7 @@ export default (functions = {}, settings = {}) => {
   return Promise.all(promises)
 
   .then(res => {
-    debug && log(`Structure functions - done`)
+    debug && log(`Structure Roles - done`)
     return res
   })
 
