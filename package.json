@@ -1,6 +1,6 @@
 {
   "name": "faunadb-transform",
-  "version": "0.0.48",
+  "version": "0.0.49-1",
   "description": "FaunaDB Transformation Package",
   "main": "dist/index.js",
   "scripts": {

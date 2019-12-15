@@ -25,3 +25,5 @@ Fill test data to collections from [faker](https://www.npmjs.com/package/faker) 
   - [x] user-functions
   - [x] user-roles
 - [ ] Transfer data between DB
+  - [ ] with refs
+  - [x] simple data (clean data without ref links)
