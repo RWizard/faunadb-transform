@@ -2,6 +2,8 @@
 /*jshint -W061*/
 // import log from '../log'
 import simple from './data-simple'
+import target from './data-ref-target'
+import source from './data-ref-source'
 
 const DEFAULT_TYPE = 'simple'
 
@@ -27,9 +29,36 @@ export default async (data = {}, settings = {}) => {
     return d
   })
 
-  const dataSimple = dataArray.filter(f => {
-    return f.type === 'simple'
+  const dataTarget = dataArray.filter(f => {
+    return f.type === 'ref-target'
   })
-  return simple(dataSimple, settings)
+
+  return target(dataTarget, settings)
+
+  .then(targets => {
+    const dataSource = dataArray.filter(f => {
+      return f.type === 'ref-source'
+    })
+    return source(dataSource, settings)
+    .then(sources => {
+      return {
+        targets,
+        sources
+      }
+    })
+  })
+  .then(result => {
+    const dataSimple = dataArray.filter(f => {
+      return f.type === 'simple'
+    })
+    return simple(dataSimple, settings)
+
+    .then(simples => {
+      result.simples = simples
+      return result
+    })
+
+  })
+
 }
 

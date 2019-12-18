@@ -93,7 +93,6 @@ export default (collections = {}, settings = {}) => {
       return await Collections(targetCollection, settings)
 
       .then(result => {
-        // console.log('res.indexes :', res.indexes);
         const indexesArray = res.indexes && res.indexes.data
           ? res.indexes.data.map(index => {
             const { name , terms = [], serialized, data, unique , values = [] } = index
@@ -105,7 +104,7 @@ export default (collections = {}, settings = {}) => {
                 name,
                 terms,
                 serialized,
-                source: res.collection.params.name,
+                source: collection.params.name,
                 data,
                 unique,
                 values
@@ -120,7 +119,7 @@ export default (collections = {}, settings = {}) => {
         }
       })
       .catch(err => {
-        // console.log('err :', err);
+        console.log('err :', err);
       })
     })
 
