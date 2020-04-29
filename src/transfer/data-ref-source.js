@@ -302,7 +302,6 @@ const transferToTarget = async (source, data, settings) => {
   // })
 
   .catch(err => {
-    console.log('err :', err);
     debug && err.requestResult && JSON.parse(err.requestResult.responseRaw)
 
     .errors.map(error =>
