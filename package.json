@@ -42,7 +42,7 @@
     "prettier": "^1.19.1",
     "regenerator-runtime": "^0.13.3"
   },
-  "homepage": "https://faunadb-transform.now.sh",
+  "homepage": "https://faunadb-transform-docz.now.sh",
   "repository": {
     "type": "git",
     "url": "https://github.com/RWizard/faunadb-transform"
